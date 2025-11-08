@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escult - My Designs</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a73e8;
+            --primary-dark: #0d66d0;
+            --primary-light: #e8f0fe;
+            --text-primary: #202124;
+            --text-secondary: #5f6368;
+            --surface: #ffffff;
+            --surface-alt: #f8f9fa;
+            --shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
+            --radius: 8px;
+            --frame-color: #000000;
+            --fascia-color: #eaeaea;
+            --button-color: #000000;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Inter', 'Segoe UI', system-ui, Arial, sans-serif;
+        }
+
+        body {
+            padding: 0;
+            margin: 0;
+            background: #f8f9fa;
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: #1a73e8;
+            color: white;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            font-size: 22px;
+        }
+
+        .brand-logo {
+            width: 36px;
+            height: 36px;
+            background: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1a73e8;
+            font-weight: bold;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .nav-btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .nav-btn.active {
+            background: white;
+            color: #1a73e8;
+        }
+
+        /* Main Content */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px;
+            width: 100%;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0 0 24px;
+            color: var(--text-primary);
+            text-align: center;
+        }
+
+        /* Design Grid */
+        .design-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .design-card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 24px;
+            box-shadow: var(--shadow);
+            border: 1px solid #e2e8f0;
+        }
+
+        /* Summary Container */
+        .summary-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-top: 20px;
+            position: relative;
+        }
+
+        .summary-preview {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .summary-details {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .summary-preview h4,
+        .summary-details h4 {
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            font-size: 1.2rem;
+            text-align: center;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 8px;
+        }
+
+        /* Preview Box */
+        .preview-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .preview-box {
+            width: fit-content;
+            max-width: 100%;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            border-radius: 12px;
+            padding: 20px;
+            transform: scale(0.8);
+            transform-origin: center;
+        }
+
+        /* Model Box Styles for Preview */
+        .model-box {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--fascia-color);
+            border-radius: 4px;
+            border: 5px solid var(--frame-color);
+            padding: 1.5rem;
+            gap: 1.5rem;
+            height: 140px;
+            transition: transform 0.3s ease;
+            transform-origin: center;
+            flex-shrink: 0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Overlay behind content */
+        .model-box::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.4);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .model-box>* {
+            position: relative;
+            z-index: 1;
+        }
+
+        .sections-1 {
+            width: calc(120px * 1 + 3rem);
+        }
+
+        .sections-2 {
+            width: calc(120px * 2 + 3rem);
+        }
+
+        .sections-3 {
+            width: calc(120px * 3 + 3rem);
+        }
+
+        /* Squares */
+        .square {
+            background: var(--fascia-color);
+            border-radius: 3px;
+            aspect-ratio: 1 / 1;
+            height: 100%;
+            flex-shrink: 0;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #dadce0;
+            overflow: hidden;
+        }
+
+        /* Overlay for all squares EXCEPT regulator */
+        .square:not(.regulator-square)::before {
+            content: "";
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border:none;
+            background: rgba(255, 255, 255, 0.4);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+
+        .square>* {
+            position: relative;
+            z-index: 1;
+        }
+
+        .square.no-border {
+            border: none;
+        }
+
+        /* Inner layouts */
+        .inner-4touch,
+        .inner-2touch {
+            position: absolute;
+            inset: 0;
+            display: grid;
+            padding: 0px;
+            gap: 16px;
+        }
+
+        .inner-4touch {
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+        }
+
+        .inner-2touch {
+            grid-template-columns: repeat(2, 1fr);
+            align-items: center;
+        }
+
+        .inner-4touch div,
+        .inner-2touch div {
+            background: var(--button-color);
+            border-radius: 2px;
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .inner-4touch div i,
+        .inner-2touch div i {
+            color: white;
+            font-size: 1rem;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+        }
+
+        /* Image Layout */
+        .inner-image {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .inner-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .inner-image.image-1 img {
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .inner-image.image-1 {
+            background-color: var(--button-color);
+            border-radius: 50%;
+            padding: 4px;
+        }
+
+        /* Summary Table */
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .summary-table th,
+        .summary-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .summary-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+
+        .summary-table td:first-child {
+            font-weight: 600;
+            color: #495057;
+            width: 40%;
+        }
+
+        /* Actions */
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .deleteBtn {
+            background: #dc3545;
+            color: white;
+        }
+
+        .deleteBtn:hover {
+            background: #c82333;
+        }
+
+        .printAll {
+            background: var(--primary);
+            color: white;
+            display: block;
+            margin: 30px auto;
+            padding: 12px 30px;
+            font-size: 16px;
+        }
+
+        .printAll:hover {
+            background: var(--primary-dark);
+        }
+
+        .backBtn {
+            background: var(--primary);
+            color: white;
+            margin: 20px;
+            padding: 10px 20px;
+        }
+
+        .backBtn:hover {
+            background: var(--primary-dark);
+        }
+
+        .empty-message {
+            text-align: center;
+            color: #666;
+            font-size: 1.2rem;
+            margin: 50px 0;
+        }
+
+        /* Watermark */
+        .watermark {
+            position: absolute;
+            font-size: 60px;
+            font-weight: bold;
+            color: rgba(30, 58, 95, 0.1);
+            z-index: -1;
+            pointer-events: none;
+            transform: rotate(-45deg);
+        }
+
+        .watermark-1 {
+            top: 20%;
+            left: 10%;
+        }
+
+        .watermark-2 {
+            top: 50%;
+            left: 60%;
+        }
+
+        .watermark-3 {
+            top: 80%;
+            left: 20%;
+        }
+
+        /* Responsive Navbar Layout */
+        @media (max-width: 600px) {
+            .navbar {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            .nav-buttons {
+                justify-content: center;
+                width: 100%;
+            }
+
+            .nav-btn {
+                flex: 1 1 auto;
+                justify-content: center;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background: white !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            .navbar,
+            .backBtn,
+            .printAll,
+            .actions,
+            h1 {
+                display: none !important;
+            }
+
+            .design-grid {
+                display: block !important;
+                max-width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+
+            .design-card {
+                display: block !important;
+                width: 100% !important;
+                margin: 0 auto 20mm auto !important;
+                padding: 15mm !important;
+                border: 1px solid #000 !important;
+                box-shadow: none !important;
+                background: #fff !important;
+                page-break-inside: avoid !important;
+            }
+
+            .summary-container {
+                flex-direction: column !important;
+                align-items: stretch !important;
+                width: 100% !important;
+            }
+
+            .preview-box {
+                transform: scale(0.7) !important;
+            }
+
+            @page {
+                margin: 15mm;
+                size: A4 portrait;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .design-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .summary-container {
+                flex-direction: column;
+            }
+
+            .preview-box {
+                transform: scale(0.7);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .preview-box {
+                transform: scale(0.6);
+            }
+        }
+
+        /* Compact card layout (mobile-size style for all screens) */
+        .design-grid {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .design-card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 16px;
+            width: 380px;
+            /* fixed like mobile width */
+            box-shadow: var(--shadow);
+            border: 1px solid #e2e8f0;
+            margin: 0 auto;
+        }
+
+        /* Keep preview box small and centered */
+        .preview-container {
+            display: flex;
+            justify-content: center;
+        }
+
+        .preview-box {
+            transform: scale(0.65) !important;
+            /* fixed mobile scale */
+            transform-origin: center;
+            width: fit-content;
+            margin: 0 auto;
+        }
+
+        /* Make text smaller inside the cards */
+        .summary-details h4,
+        .summary-preview h4 {
+            font-size: 1rem;
+        }
+
+        .summary-table th,
+        .summary-table td {
+            font-size: 0.85rem;
+            padding: 6px 8px;
+        }
+
+        /* Actions and buttons more compact */
+        .actions {
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        button {
+            font-size: 0.9rem;
+            padding: 8px 16px;
+        }
+
+        /* Print view adjustments (optional) */
+        @media print {
+            .design-card {
+                width: 100% !important;
+                transform: scale(0.7) !important;
+            }
+        }
+
+        /* Fix: Make preview perfectly centered, no side gap */
+        .summary-preview {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Remove left offset — ensure full centering inside card */
+        .preview-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            margin: 0 auto;
+            padding: 0;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+
+        /* Ensure preview box stays centered within card */
+        .preview-box {
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transform-origin: center center;
+            width: fit-content;
+            max-width: 100%;
+            padding: 20px;
+            border-radius: 12px;
+            box-sizing: border-box;
+        }
+
+        .square {
+            border: none;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="brand">
+            <div class="brand-logo">E</div>
+            <div>Escult</div>
+        </div>
+        <div class="nav-buttons">
+            <button class="nav-btn" onclick="window.location.href='index.html'">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </button>
+            <button class="nav-btn active">
+                <i class="fas fa-cube"></i>
+                <span>Designs</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <h1>My Escult Designs</h1>
+        <div class="design-grid" id="designGrid"></div>
+        <button id="print-btn" class="printAll">Print / Download All Designs</button>
+    </div>
+
+    <script>
+        const designGrid = document.getElementById('designGrid');
+        const designs = JSON.parse(localStorage.getItem('escultDesigns') || '[]');
+
+        if (designs.length === 0) {
+            designGrid.innerHTML = '<div class="empty-message">No Escult designs saved yet. Create your first design in the configurator!</div>';
+        } else {
+            designs.forEach(design => {
+                const card = document.createElement('div');
+                card.className = 'design-card';
+
+                card.innerHTML = `
+                    <div class="summary-container">
+                        <div class="watermark watermark-1">E</div>
+                        <div class="watermark watermark-2">E</div>
+                        <div class="watermark watermark-3">E</div>
+
+                        <div class="summary-preview">
+                            <h4>Final Preview</h4>
+                            <div class="preview-container">
+                                <div class="preview-box" id="preview-${design.id}"></div>
+                            </div>
+                        </div>
+
+                        <div class="summary-details">
+                            <h4>Configuration Details</h4>
+                            <table class="summary-table">
+                                <tr><th>Configuration Item</th><th>Selected Option</th></tr>
+                                <tr><td>Model Type</td><td>${design.model} Model Box</td></tr>
+                                <tr><td>Frame Color</td><td>${design.frameColorName || design.frameColor}</td></tr>
+                                <tr><td>Fascia Color</td><td>${design.fasciaColorName || design.fasciaColor}</td></tr>
+                                <tr><td>Button Color</td><td>${design.buttonColorName || design.buttonColor}</td></tr>
+                                <tr><td>Fascia Finish</td><td>${design.fasciaFinish || 'Polished'}</td></tr>
+                                <tr><td>Layouts</td><td>${Object.keys(design.layouts).length} sections configured</td></tr>
+                                <tr><td>Date & Time</td><td>${design.fileName}</td></tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="actions">
+                        <button class="deleteBtn" onclick="deleteDesign('${design.id}')">Delete Design</button>
+                    </div>
+                `;
+
+                const previewBox = card.querySelector(`#preview-${design.id}`);
+                if (design.previewHTML) {
+                    previewBox.innerHTML = design.previewHTML;
+
+                    // Apply saved colors using CSS variables
+                    const modelBox = previewBox.querySelector('.model-box');
+                    if (modelBox) {
+                        modelBox.style.setProperty('--frame-color', design.frameColor);
+                        modelBox.style.setProperty('--fascia-color', design.fasciaColor);
+                        modelBox.style.backgroundColor = design.fasciaColor;
+                        modelBox.style.borderColor = design.frameColor;
+                    }
+
+                    const squares = previewBox.querySelectorAll('.square');
+                    squares.forEach(square => {
+                        square.style.setProperty('--fascia-color', design.fasciaColor);
+                        square.style.backgroundColor = design.fasciaColor;
+                    });
+
+                    const innerButtons = previewBox.querySelectorAll('.inner-4touch div, .inner-2touch div');
+                    innerButtons.forEach(button => {
+                        button.style.setProperty('--button-color', design.buttonColor);
+                        button.style.backgroundColor = design.buttonColor;
+                    });
+
+                    const image1Layouts = previewBox.querySelectorAll('.inner-image.image-1');
+                    image1Layouts.forEach(inner => {
+                        inner.style.setProperty('--button-color', design.buttonColor);
+                        inner.style.backgroundColor = design.buttonColor;
+                    });
+
+                    // Apply responsive scaling
+                    const previewContainer = card.querySelector('.preview-container');
+                    const previewBoxElement = card.querySelector('.preview-box');
+                    applyResponsiveScaling(previewBoxElement);
+                }
+
+                designGrid.appendChild(card);
+            });
+        }
+
+        function applyResponsiveScaling(previewBox) {
+            // Apply the same scaling logic as the configurator
+            const width = window.innerWidth;
+            let scale = 0.8; // Default scale
+
+            if (width <= 370) {
+                scale = 0.65;
+            } else if (width <= 450) {
+                scale = 0.75;
+            } else if (width <= 550) {
+                scale = 0.9;
+            } else if (width <= 700) {
+                scale = 1.2;
+            } else if (width <= 900) {
+                scale = 1.4;
+            } else if (width <= 2000) {
+                scale = 1.6;
+            }
+
+            previewBox.style.transform = `scale(${scale})`;
+        }
+
+        function deleteDesign(id) {
+            if (confirm('Are you sure you want to delete this design?')) {
+                let allDesigns = JSON.parse(localStorage.getItem('escultDesigns') || '[]');
+                allDesigns = allDesigns.filter(d => d.id !== id);
+                localStorage.setItem('escultDesigns', JSON.stringify(allDesigns));
+                location.reload();
+            }
+        }
+
+        // Print functionality
+        document.getElementById('print-btn').addEventListener('click', function () {
+            const now = new Date();
+            const day = String(now.getDate()).padStart(2, '0');
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const year = now.getFullYear();
+
+            let hours = now.getHours();
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const ampm = hours >= 12 ? 'pm' : 'am';
+            hours = hours % 12;
+            hours = hours ? hours : 12;
+
+            const formattedDateTime = `${day}-${month}-${year})(${hours}-${minutes}-${ampm}`;
+            const filename = `Escult_Designs(${formattedDateTime})`;
+
+            const originalTitle = document.title;
+            document.title = filename;
+
+            setTimeout(() => {
+                window.print();
+                setTimeout(() => {
+                    document.title = originalTitle;
+                }, 1000);
+            }, 100);
+        });
+
+        // Apply responsive scaling on window resize
+        window.addEventListener('resize', function () {
+            const previewBoxes = document.querySelectorAll('.preview-box');
+            previewBoxes.forEach(previewBox => {
+                applyResponsiveScaling(previewBox);
+            });
+        });
+        
+    </script>
+    <script>
+    // Check login session
+    const isLoggedIn = sessionStorage.getItem('lumi_authenticated');
+
+    if (!isLoggedIn) {
+        // User NOT logged in → Force back to login
+        window.location.href = 'login.html';
+    }
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Premium Model Box Configurator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #1a73e8;
+            --primary-light: #e8f0fe;
+            --surface-color: #ffffff;
+            --background-color: #f8f9fa;
+            --text-primary: #202124;
+            --text-secondary: #5f6368;
+            --border-color: #dadce0;
+            --shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
+            --shadow-hover: 0 1px 3px 0 rgba(60, 64, 67, 0.3), 0 4px 8px 3px rgba(60, 64, 67, 0.15);
+            --radius: 8px;
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            --frame-color: #000000;
+            --fascia-color: #eaeaea;
+            --button-color: #000000;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Inter", sans-serif;
+            background: var(--background-color);
+            color: var(--text-primary);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            font-weight: 400;
+        }
+
+        .configurator {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            background: var(--surface-color);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 2rem;
+            transition: var(--transition);
+        }
+
+        .configurator:hover {
+            box-shadow: var(--shadow-hover);
+        }
+
+        /* Preview Section */
+        .preview-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1.125rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-title::before {
+            content: "";
+            display: block;
+            width: 4px;
+            height: 16px;
+            background: var(--primary-color);
+            border-radius: 2px;
+        }
+
+        .preview {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            min-height: 280px;
+            background: var(--background-color);
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        /* Model Box */
+        /* Model box */
+        .model-box {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--fascia-color);
+            border-radius: 4px;
+            border: 5px solid var(--frame-color);
+            padding: 1.5rem;
+            gap: 1.5rem;
+            height: 140px;
+            transition: transform 0.3s ease;
+            transform-origin: center;
+            flex-shrink: 0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        /* Overlay behind content */
+        .model-box::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.4);
+            /* lighten fascia only */
+            pointer-events: none;
+            z-index: 0;
+            /* move it BELOW children */
+        }
+
+        .model-box>* {
+            position: relative;
+            z-index: 1;
+            /* make content appear above overlay */
+        }
+
+        /* Squares */
+        .square {
+            background: var(--fascia-color);
+            border-radius: 3px;
+            aspect-ratio: 1 / 1;
+            height: 100%;
+            flex-shrink: 0;
+            position: relative;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+
+        /* Overlay for all squares EXCEPT regulator */
+        .square:not(.regulator-square)::before {
+            content: "";
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            right: -4px;
+            bottom: -4px;
+            border: none;
+            background: rgba(255, 255, 255, 0.4);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .square>* {
+            position: relative;
+            z-index: 1;
+            /* inner images/buttons unaffected */
+        }
+
+
+
+
+        .square:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .square.no-border {
+            border: none;
+        }
+
+        .square.selected {
+            border: 2px solid var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
+        }
+
+        /* Inner layouts */
+        .inner-4touch,
+        .inner-2touch {
+            position: absolute;
+            inset: 0;
+            display: grid;
+            padding: 0px;
+            gap: 16px;
+        }
+
+        .inner-4touch {
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+        }
+
+        .inner-2touch {
+            grid-template-columns: repeat(2, 1fr);
+            align-items: center;
+        }
+
+        .inner-4touch div,
+        .inner-2touch div {
+            background: var(--button-color);
+            border-radius: 2px;
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* Remove hover and selection effects after layout is selected */
+        .inner-4touch div:hover,
+        .inner-2touch div:hover {
+            border: none;
+            box-shadow: none;
+        }
+
+        .inner-4touch div.selected,
+        .inner-2touch div.selected {
+            border: none;
+            box-shadow: none;
+        }
+
+        .inner-4touch div i,
+        .inner-2touch div i {
+            color: white;
+            font-size: 1rem;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+        }
+
+        /* Image Layout */
+        .inner-image {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .inner-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+
+        .inner-image:hover img {
+            transform: scale(1.05);
+        }
+
+        /* Special styling for Image 1 Layout */
+        .inner-image.image-1 img {
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .inner-image.image-1 {
+            background-color: var(--button-color);
+            border-radius: 50%;
+            padding: 4px;
+        }
+
+        /* Controls */
+        .controls-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .model-controls {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .model-controls button {
+            padding: 0.75rem 1.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            background: var(--surface-color);
+            color: var(--text-primary);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .model-controls button:hover {
+            background: var(--primary-light);
+            border-color: var(--primary-color);
+        }
+
+        .model-controls button.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .model-controls button::before {
+            content: "";
+            display: block;
+            width: 16px;
+            height: 16px;
+            background: currentColor;
+            border-radius: 2px;
+            opacity: 0.7;
+        }
+
+        /* Color Controls */
+        .color-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .color-control {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .color-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .color-options {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .color-option {
+            width: 30px;
+            height: 30px;
+            border-radius: 4px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: var(--transition);
+        }
+
+        .color-option:hover {
+            transform: scale(1.1);
+        }
+
+        .color-option.active {
+            border-color: var(--primary-color);
+            transform: scale(1.1);
+        }
+
+        /* Finish Options */
+        .finish-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .finish-option {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border-color);
+            background: var(--surface-color);
+            border-radius: var(--radius);
+            font-size: .85rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: 0.2s ease;
+        }
+
+        .finish-option:hover {
+            background: var(--primary-light);
+            border-color: var(--primary-color);
+        }
+
+        .finish-option.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        /* Icon Engraving Controls */
+        .icon-engraving-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 1rem;
+            padding: 1.5rem;
+            background: var(--background-color);
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+        }
+
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .toggle-label {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .toggle-note {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        /* Toggle Switch */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.toggle-slider {
+            background-color: var(--primary-color);
+        }
+
+        input:checked+.toggle-slider:before {
+            transform: translateX(26px);
+        }
+
+        .button-selection {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .button-selection-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .button-options {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .button-option {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            background: var(--surface-color);
+            color: var(--text-primary);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .button-option:hover {
+            background: var(--primary-light);
+            border-color: var(--primary-color);
+        }
+
+        .button-option.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .icon-selection {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .icon-selection-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .icon-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+            gap: 0.5rem;
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            background: var(--surface-color);
+        }
+
+        .icon-option {
+            width: 60px;
+            height: 60px;
+            border-radius: var(--radius);
+            background: rgb(0, 0, 0);
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            padding: 0.25rem;
+        }
+
+        .icon-option:hover {
+            background: var(--primary-light);
+            border-color: var(--primary-color);
+        }
+
+        .icon-option.active {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+
+        .icon-option img {
+            width: 80%;
+            height: 80%;
+            object-fit: contain;
+        }
+
+        .icon-option.none-option {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Dynamic widths */
+        .sections-1 {
+            width: calc(120px * 1 + 3rem);
+        }
+
+        .sections-2 {
+            width: calc(120px * 2 + 3rem);
+        }
+
+        .sections-3 {
+            width: calc(120px * 3 + 3rem);
+        }
+
+        /* Popup Model */
+        .popup-model {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .popup-model-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            background: var(--background-color);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .popup-model-title {
+            font-size: 1.125rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .popup-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .popup-option {
+            padding: 0.875rem 1rem;
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            background: var(--surface-color);
+            color: var(--text-primary);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .popup-option:hover {
+            background: var(--primary-light);
+            border-color: var(--primary-color);
+        }
+
+        .popup-option::before {
+            content: "";
+            display: block;
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+
+        .option-4touch::before {
+            background: #6c63ff;
+        }
+
+        .option-2touch::before {
+            background: #00b894;
+        }
+
+        .option-image-1::before {
+            background: #0984e3;
+        }
+
+        .option-image-2::before {
+            background: #00cec9;
+        }
+
+        .option-image-3::before {
+            background: #a29bfe;
+        }
+
+        /* Save Button */
+        .save-section {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .save-btn {
+            padding: 0.875rem 2rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--radius);
+            font-weight: 500;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .save-btn:hover {
+            background: #0d66d0;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(26, 115, 232, 0.3);
+        }
+
+        /* Responsive scaling */
+        @media (max-width: 2000px) {
+            .model-box {
+                transform: scale(1.6);
+            }
+        }
+
+        @media (max-width: 900px) {
+            .model-box {
+                transform: scale(1.4);
+            }
+        }
+
+        @media (max-width: 700px) {
+            .model-box {
+                transform: scale(1.2);
+            }
+        }
+
+        @media (max-width: 550px) {
+            .model-box {
+                transform: scale(0.9);
+            }
+
+            .configurator {
+                padding: 1rem;
+            }
+        }
+
+        @media (max-width: 450px) {
+            .model-box {
+                transform: scale(0.75);
+            }
+
+            .configurator {
+                padding: .7rem;
+            }
+        }
+
+        @media (max-width: 370px) {
+            .model-box {
+                transform: scale(0.65);
+            }
+
+            .configurator {
+                padding: .5rem;
+            }
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 2rem;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .option-image-4::before {
+            background: #444444;
+        }
+
+        .option-image-5::before {
+            background: #ff6767;
+        }
+
+        .option-image-6::before {
+            background: #67b0ff;
+        }
+
+        .header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            padding: 1rem 0;
+            margin-bottom: 1.5rem;
+        }
+
+        .brand-name {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            letter-spacing: 0.5px;
+        }
+
+        .design-btn {
+            padding: 0.6rem 1.2rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .design-btn:hover {
+            background: #0d66d0;
+            transform: translateY(-2px);
+            box-shadow: 0 3px 6px rgba(26, 115, 232, 0.3);
+        }
+
+        #fasciaFinishOptions .color-option {
+            width: 55px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: .8rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header class="header-bar">
+            <span class="brand-name">Escult</span>
+            <button class="design-btn">Design</button>
+        </header>
+
+        <div class="configurator">
+            <div class="preview-section">
+                <h2 class="section-title">Preview</h2>
+                <div id="preview" class="preview">
+                    <div class="model-box sections-1">
+                        <div class="square"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="controls-section">
+                <h2 class="section-title">Box Configuration</h2>
+                <div class="model-controls">
+                    <button data-model="2" class="active">
+                        2 Model Box
+                    </button>
+                    <button data-model="4">
+                        4 Model Box
+                    </button>
+                    <button data-model="6">
+                        6 Model Box
+                    </button>
+                    <button data-model="8">
+                        8 Model Box
+                    </button>
+                </div>
+
+                <div class="popup-model">
+                    <h2 class="section-title">Inner Layout Configuration</h2>
+                    <div class="popup-model-container">
+                        <div class="popup-model-title">Select Inner Layout</div>
+                        <div class="popup-options">
+                            <button class="popup-option option-4touch" data-type="4touch">4 Touch</button>
+                            <button class="popup-option option-2touch" data-type="2touch">2 Touch</button>
+                            <button class="popup-option option-image-1 regulator-square"
+                                data-type="image-1">Regulator</button>
+                            <button class="popup-option option-image-2" data-type="image-2">Socket</button>
+                            <button class="popup-option option-image-3" data-type="image-3">Cockpit</button>
+                            <button class="popup-option option-image-4" data-type="image-4">LAN Port</button>
+                            <button class="popup-option option-image-6" data-type="image-6">USB Port</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Icon Engraving Controls -->
+                <div class="icon-engraving-controls">
+                    <div class="toggle-container">
+                        <div>
+                            <div class="toggle-label">Icon Engraving</div>
+                            <div class="toggle-note">Add icons to buttons for enhanced customization</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="iconEngravingToggle">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="button-selection" id="buttonSelection" style="display: none;">
+                        <div class="button-selection-label">Select Button</div>
+                        <div class="button-options" id="buttonOptions">
+                            <!-- Will be populated dynamically -->
+                        </div>
+                    </div>
+
+                    <div class="icon-selection" id="iconSelection" style="display: none;">
+                        <div class="icon-selection-label">Select Icon</div>
+                        <div class="icon-panel" id="iconPanel">
+                            <!-- Will be populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="color-controls">
+                    <div class="color-control">
+                        <div class="color-label">Frame Color</div>
+                        <div class="color-options" id="frameColorOptions">
+                            <div class="color-option active" style="background: #C0C0C0;" data-color="#C0C0C0"
+                                data-name="Silver"></div>
+                            <div class="color-option" style="background: #FFDF00;" data-color="#FFDF00"
+                                data-name="Gold"></div>
+                            <div class="color-option" style="background: #FF66CC;" data-color="#FF66CC"
+                                data-name="Rose Pink"></div>
+                            <div class="color-option" style="background: #0E7C61;" data-color="#0E7C61"
+                                data-name="Turquoise"></div>
+                            <div class="color-option" style="background: #B87333;" data-color="#B87333"
+                                data-name="Copper"></div>
+                            <div class="color-option" style="background: #722F37;" data-color="#722F37"
+                                data-name="Wine"></div>
+                            <div class="color-option" style="background: #91A3B0;" data-color="#91A3B0"
+                                data-name="Grey"></div>
+                            <div class="color-option" style="background: #41424C;" data-color="#41424C"
+                                data-name="Graphite"></div>
+                            <div class="color-option" style="background: #000000;" data-color="#000000"
+                                data-name="Black"></div>
+                        </div>
+                    </div>
+                    <div class="color-control">
+                        <div class="color-label">Fascia Color</div>
+                        <div class="color-options" id="fasciaColorOptions">
+                            <div class="color-option active" style="background: #C0C0C0;" data-color="#C0C0C0"
+                                data-name="Silver"></div>
+                            <div class="color-option" style="background: #FFDF00;" data-color="#FFDF00"
+                                data-name="Gold"></div>
+                            <div class="color-option" style="background: #FF66CC;" data-color="#FF66CC"
+                                data-name="Rose Pink"></div>
+                            <div class="color-option" style="background: #0E7C61;" data-color="#0E7C61"
+                                data-name="Turquoise"></div>
+                            <div class="color-option" style="background: #B87333;" data-color="#B87333"
+                                data-name="Copper"></div>
+                            <div class="color-option" style="background: #722F37;" data-color="#722F37"
+                                data-name="Wine"></div>
+                            <div class="color-option" style="background: #91A3B0;" data-color="#91A3B0"
+                                data-name="Grey"></div>
+                            <div class="color-option" style="background: #41424C;" data-color="#41424C"
+                                data-name="Graphite"></div>
+                            <div class="color-option" style="background: #000000;" data-color="#000000"
+                                data-name="Black"></div>
+                        </div>
+                    </div>
+                    <div class="color-control">
+                        <div class="color-label">Button Color</div>
+                        <div class="color-options" id="buttonColorOptions">
+                            <div class="color-option active" style="background: #C0C0C0;" data-color="#C0C0C0"
+                                data-name="Silver"></div>
+                            <div class="color-option" style="background: #FFDF00;" data-color="#FFDF00"
+                                data-name="Gold"></div>
+                            <div class="color-option" style="background: #FF66CC;" data-color="#FF66CC"
+                                data-name="Rose Pink"></div>
+                            <div class="color-option" style="background: #0E7C61;" data-color="#0E7C61"
+                                data-name="Turquoise"></div>
+                            <div class="color-option" style="background: #B87333;" data-color="#B87333"
+                                data-name="Copper"></div>
+                            <div class="color-option" style="background: #722F37;" data-color="#722F37"
+                                data-name="Wine"></div>
+                            <div class="color-option" style="background: #91A3B0;" data-color="#91A3B0"
+                                data-name="Grey"></div>
+                            <div class="color-option" style="background: #41424C;" data-color="#41424C"
+                                data-name="Graphite"></div>
+                            <div class="color-option" style="background: #000000;" data-color="#000000"
+                                data-name="Black"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="color-control">
+                    <div class="color-label">Fascia Finish</div>
+                    <div class="finish-options" id="fasciaFinishOptions">
+                        <div class="finish-option active" data-finish="polished">Polished</div>
+                        <div class="finish-option" data-finish="brush">Brushed</div>
+                        <div class="finish-option" data-finish="sandmatt">Sandmatt</div>
+                    </div>
+                </div>
+
+                <!-- Save Button -->
+                <div class="save-section">
+                    <button class="save-btn" id="saveConfigBtn">
+                        <i class="fas fa-save"></i>
+                        Save Configuration
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>Premium Model Box Configurator &copy; 2023</p>
+    </footer>
+
+    <script>
+        const preview = document.getElementById("preview");
+        const buttons = document.querySelectorAll(".model-controls button");
+        const popupOptions = document.querySelectorAll(".popup-option");
+        const frameColorOptions = document.querySelectorAll("#frameColorOptions .color-option");
+        const fasciaColorOptions = document.querySelectorAll("#fasciaColorOptions .color-option");
+        const buttonColorOptions = document.querySelectorAll("#buttonColorOptions .color-option");
+        const fasciaFinishOptions = document.querySelectorAll("#fasciaFinishOptions .finish-option");
+        const iconEngravingToggle = document.getElementById("iconEngravingToggle");
+        const buttonSelection = document.getElementById("buttonSelection");
+        const buttonOptions = document.getElementById("buttonOptions");
+        const iconSelection = document.getElementById("iconSelection");
+        const iconPanel = document.getElementById("iconPanel");
+        const saveConfigBtn = document.getElementById("saveConfigBtn");
+
+        let selectedSquare = null;
+        let currentLayoutType = null;
+        let selectedButton = null;
+        let currentModel = '2';
+        let currentLayouts = {};
+        let currentFasciaFinish = "polished";
+
+        const modelConfig = {
+            2: 1,
+            4: 2,
+            6: 3,
+            8: 3,
+        };
+
+        // Squares that allow only 4-touch and 2-touch
+        function restrictedSquares(model) {
+            if (model === "2") return [0];
+            if (model === "4") return [0, 2];
+            if (model === "6") return [0, 3];
+            if (model === "8") return [0, 4];
+            return [];
+        }
+
+        // Local image paths
+        const localImages = {
+            'image-1': './images/1.png',
+            'image-2': './images/2.png',
+            'image-3': './images/3.png',
+            'image-4': './images/4.png',
+            'image-5': './images/5.png',
+            'image-6': './images/6.png'
+        };
+
+        // Initialize the first square with click event
+        function initializeFirstSquare() {
+            const firstSquare = document.querySelector('.square');
+            if (firstSquare) {
+                firstSquare.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    selectedSquare = firstSquare;
+                    updateSquareSelection();
+                });
+            }
+        }
+
+        // Update square selection styling
+        function updateSquareSelection() {
+            document.querySelectorAll('.square').forEach(square => {
+                square.classList.remove('selected');
+            });
+            if (selectedSquare) {
+                selectedSquare.classList.add('selected');
+            }
+        }
+
+        // Call initialization on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            initializeFirstSquare();
+            updateModelBoxColors();
+            populateIconPanel();
+        });
+
+        // Color selection
+        frameColorOptions.forEach(option => {
+            option.addEventListener('click', function () {
+                frameColorOptions.forEach(opt => opt.classList.remove('active'));
+                this.classList.add('active');
+                document.documentElement.style.setProperty('--frame-color', this.dataset.color);
+                updateModelBoxColors();
+            });
+        });
+
+        fasciaColorOptions.forEach(option => {
+            option.addEventListener('click', function () {
+                fasciaColorOptions.forEach(opt => opt.classList.remove('active'));
+                this.classList.add('active');
+                document.documentElement.style.setProperty('--fascia-color', this.dataset.color);
+                updateModelBoxColors();
+            });
+        });
+
+        buttonColorOptions.forEach(option => {
+            option.addEventListener('click', function () {
+                buttonColorOptions.forEach(opt => opt.classList.remove('active'));
+                this.classList.add('active');
+                document.documentElement.style.setProperty('--button-color', this.dataset.color);
+                updateButtonColors();
+            });
+        });
+
+        // Fascia Finish selection
+        fasciaFinishOptions.forEach(opt => {
+            opt.addEventListener("click", function () {
+                fasciaFinishOptions.forEach(o => o.classList.remove("active"));
+                this.classList.add("active");
+                currentFasciaFinish = this.dataset.finish;
+            });
+        });
+
+        // Update model box and square colors
+        function updateModelBoxColors() {
+            const modelBoxes = document.querySelectorAll('.model-box');
+            const squares = document.querySelectorAll('.square');
+
+            modelBoxes.forEach(box => {
+                box.style.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue('--fascia-color');
+                box.style.borderColor = getComputedStyle(document.documentElement).getPropertyValue('--frame-color');
+            });
+
+            squares.forEach(square => {
+                square.style.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue('--fascia-color');
+            });
+        }
+
+        // Update button colors
+        function updateButtonColors() {
+            const buttonColor = getComputedStyle(document.documentElement)
+                .getPropertyValue('--button-color')
+                .trim();
+
+            // Update all inner buttons
+            const innerButtons = document.querySelectorAll('.inner-4touch div, .inner-2touch div');
+            innerButtons.forEach(button => {
+                button.style.backgroundColor = buttonColor;
+            });
+
+            // Also update Image 1 layout backgrounds live
+            const image1Layouts = document.querySelectorAll('.inner-image.image-1');
+            image1Layouts.forEach(inner => {
+                inner.style.backgroundColor = buttonColor;
+            });
+        }
+
+        // Model switch
+        buttons.forEach((btn) => {
+            btn.addEventListener("click", () => {
+                buttons.forEach((b) => b.classList.remove("active"));
+                btn.classList.add("active");
+
+                const model = btn.dataset.model;
+                currentModel = model;
+                const sectionCount = modelConfig[model];
+
+                const modelBox = document.createElement("div");
+                modelBox.classList.add("model-box", `sections-${sectionCount}`);
+
+                for (let i = 0; i < sectionCount; i++) {
+                    const square = document.createElement("div");
+                    square.classList.add("square");
+                    square.dataset.index = i;
+                    square.addEventListener("click", (e) => {
+                        e.stopPropagation();
+                        selectedSquare = square;
+                        updateSquareSelection();
+
+                        // ✅ Check if this square already has a layout (4touch or 2touch)
+                        const inner = square.querySelector('.inner-4touch, .inner-2touch');
+                        if (inner && iconEngravingToggle.checked) {
+                            // If Icon Engraving is ON, show buttons dynamically
+                            buttonSelection.style.display = 'flex';
+                            iconSelection.style.display = 'flex';
+                            updateButtonOptions();
+                        }
+                    });
+
+                    modelBox.appendChild(square);
+                }
+
+                preview.innerHTML = "";
+                preview.appendChild(modelBox);
+
+                // Reset state
+                currentLayoutType = null;
+                selectedSquare = null;
+                updateSquareSelection();
+
+                // Update colors for the new model box
+                updateModelBoxColors();
+            });
+        });
+
+        // Popup action
+        popupOptions.forEach(option => {
+            option.addEventListener("click", (e) => {
+
+                if (!selectedSquare) {
+                    alert("Please select a square first.");
+                    return;
+                }
+
+                const idx = Number(selectedSquare.dataset.index);
+                const type = e.currentTarget.dataset.type;
+                const restrict = restrictedSquares(currentModel);
+
+                // If restricted square → only 4touch + 2touch allowed
+                if (restrict.includes(idx)) {
+                    if (!(type === "4touch" || type === "2touch")) {
+                        alert("This position supports only 4-Touch or 2-Touch layouts.");
+                        return;
+                    }
+                }
+
+                currentLayoutType = type;
+                selectedSquare.innerHTML = "";
+                currentLayouts[idx] = type;
+
+                if (type === "4touch") {
+                    const inner = document.createElement("div");
+                    inner.className = "inner-4touch";
+                    for (let i = 0; i < 4; i++) {
+                        inner.appendChild(document.createElement("div"));
+                    }
+                    selectedSquare.appendChild(inner);
+                    updateButtonColors();
+                    updateButtonOptions(); // 🔹 Auto-show buttons for icon engraving
+                }
+                else if (type === "2touch") {
+                    const inner = document.createElement("div");
+                    inner.className = "inner-2touch";
+                    for (let i = 0; i < 2; i++) {
+                        inner.appendChild(document.createElement("div"));
+                    }
+                    selectedSquare.appendChild(inner);
+                    updateButtonColors();
+                    updateButtonOptions(); // 🔹 Auto-show buttons for icon engraving
+                }
+
+                else if (type.startsWith("image-")) {
+                    const inner = document.createElement("div");
+                    inner.className = `inner-image ${type}`;
+                    const img = document.createElement("img");
+                    img.src = localImages[type];
+                    inner.appendChild(img);
+                    selectedSquare.appendChild(inner);
+                }
+
+                selectedSquare.classList.add("no-border");
+
+                if (iconEngravingToggle.checked) updateButtonOptions();
+            });
+        });
+
+        // Icon engraving toggle
+        iconEngravingToggle.addEventListener('change', function () {
+            if (this.checked) {
+                buttonSelection.style.display = 'flex';
+                iconSelection.style.display = 'flex';
+                updateButtonOptions();
+            } else {
+                buttonSelection.style.display = 'none';
+                iconSelection.style.display = 'none';
+                // Clear any selected button
+                if (selectedButton) {
+                    selectedButton.classList.remove('active');
+                    selectedButton = null;
+                }
+            }
+        });
+
+        // Update button options based on current layout
+        function updateButtonOptions() {
+            buttonOptions.innerHTML = '';
+
+            if (!selectedSquare || !currentLayoutType) return;
+
+            const innerButtons = selectedSquare.querySelectorAll('.inner-4touch div, .inner-2touch div');
+
+            if (innerButtons.length === 0) {
+                buttonOptions.innerHTML = '<p>No buttons available. Please select a touch layout first.</p>';
+                return;
+            }
+
+            innerButtons.forEach((button, index) => {
+                const buttonOption = document.createElement('div');
+                buttonOption.className = 'button-option';
+                buttonOption.textContent = `Button ${index + 1}`;
+                buttonOption.dataset.index = index;
+
+                buttonOption.addEventListener('click', () => {
+                    // Clear previous selection
+                    document.querySelectorAll('.button-option').forEach(option => {
+                        option.classList.remove('active');
+                    });
+
+                    // Set new selection
+                    buttonOption.classList.add('active');
+                    selectedButton = button;
+                });
+
+                buttonOptions.appendChild(buttonOption);
+            });
+        }
+
+        // Populate icon panel with images
+        function populateIconPanel() {
+            iconPanel.innerHTML = '';
+
+            // Add "None" option first
+            const noneOption = document.createElement('div');
+            noneOption.className = 'icon-option none-option active';
+            noneOption.textContent = 'None';
+            noneOption.dataset.icon = 'none';
+            noneOption.addEventListener('click', function () {
+                document.querySelectorAll('.icon-option').forEach(option => {
+                    option.classList.remove('active');
+                });
+                this.classList.add('active');
+
+                if (selectedButton) {
+                    selectedButton.innerHTML = '';
+                }
+            });
+            iconPanel.appendChild(noneOption);
+
+            // Add icon images from 1 to 87
+            for (let i = 1; i <= 87; i++) {
+                const iconOption = document.createElement('div');
+                iconOption.className = 'icon-option';
+                iconOption.dataset.icon = i;
+
+                const img = document.createElement('img');
+                img.src = `./images/icons/${i}.png`;
+                img.alt = `Icon ${i}`;
+
+                iconOption.appendChild(img);
+                iconOption.addEventListener('click', function () {
+                    document.querySelectorAll('.icon-option').forEach(option => {
+                        option.classList.remove('active');
+                    });
+                    this.classList.add('active');
+
+                    if (selectedButton) {
+                        selectedButton.innerHTML = '';
+                        const iconImg = document.createElement('img');
+                        iconImg.src = `./images/icons/${i}.png`;
+                        iconImg.alt = `Icon ${i}`;
+                        iconImg.style.width = '80%';
+                        iconImg.style.height = '80%';
+                        iconImg.style.objectFit = 'contain';
+                        selectedButton.appendChild(iconImg);
+                    }
+                });
+
+                iconPanel.appendChild(iconOption);
+            }
+        }
+
+        // Save configuration
+        saveConfigBtn.addEventListener('click', function () {
+            // Collect configuration data
+            const configData = {
+                id: 'escult_design_' + Date.now(),
+
+                // Model
+                model: currentModel,
+
+                // Color Codes
+                frameColor: getComputedStyle(document.documentElement)
+                    .getPropertyValue('--frame-color')
+                    .trim(),
+                fasciaColor: getComputedStyle(document.documentElement)
+                    .getPropertyValue('--fascia-color')
+                    .trim(),
+                buttonColor: getComputedStyle(document.documentElement)
+                    .getPropertyValue('--button-color')
+                    .trim(),
+
+                // Color Names
+                frameColorName: document.querySelector("#frameColorOptions .color-option.active").dataset.name,
+                fasciaColorName: document.querySelector("#fasciaColorOptions .color-option.active").dataset.name,
+                buttonColorName: document.querySelector("#buttonColorOptions .color-option.active").dataset.name,
+
+                // Fascia Finish
+                fasciaFinish: currentFasciaFinish,
+
+                // Layouts
+                layouts: currentLayouts,
+
+                // System Info
+                timestamp: new Date().toISOString(),
+                fileName: getFormattedDateTime(),
+                previewHTML: document.getElementById("preview").innerHTML
+            };
+
+            // Save to localStorage
+            let designs = JSON.parse(localStorage.getItem('escultDesigns') || '[]');
+            designs.push(configData);
+            localStorage.setItem('escultDesigns', JSON.stringify(designs));
+
+            alert('✅ Configuration saved successfully! You can view it in the Designs section.');
+
+            // Optionally redirect to designs page
+            // window.location.href = 'escult-designs.html';
+        });
+
+        function getFormattedDateTime() {
+            const now = new Date();
+            const day = String(now.getDate()).padStart(2, '0');
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const year = now.getFullYear();
+
+            let hours = now.getHours();
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const ampm = hours >= 12 ? 'pm' : 'am';
+            hours = hours % 12;
+            hours = hours ? hours : 12;
+
+            return `${day}-${month}-${year}/${hours}:${minutes}-${ampm}`;
+        }
+
+        // Remove selection when clicking outside any square
+        document.addEventListener("click", function (e) {
+            if (!e.target.closest(".square")) {
+                selectedSquare = null;
+                document.querySelectorAll(".square").forEach(sq => sq.classList.remove("selected"));
+            }
+        });
+
+        document.querySelector('.design-btn').addEventListener('click', () => {
+            window.location.href = 'escult-designs.html';
+        });
+    </script>
+
+    <script>
+    // Check login session
+    const isLoggedIn = sessionStorage.getItem('lumi_authenticated');
+
+    if (!isLoggedIn) {
+        // User NOT logged in → Force back to login
+        window.location.href = 'login.html';
+    }
+</script>
+
+</body>
+
+</html>
