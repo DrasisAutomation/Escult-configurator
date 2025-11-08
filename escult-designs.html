@@ -101,8 +101,8 @@
         .main-container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 24px;
             width: 100%;
+            padding: 20px;
         }
 
         h1 {
@@ -499,6 +499,7 @@
                 box-shadow: none !important;
                 background: #fff !important;
                 page-break-inside: avoid !important;
+                page-break-after: auto !important;
             }
 
             .summary-container {
@@ -508,7 +509,13 @@
             }
 
             .preview-box {
-                transform: scale(0.7) !important;
+                transform: scale(1.2) !important;
+                margin: 0 auto !important;
+            }
+
+            .model-box {
+                transform: scale(1.1) !important;
+                margin: 0 auto !important;
             }
 
             @page {
@@ -598,7 +605,7 @@
         @media print {
             .design-card {
                 width: 100% !important;
-                transform: scale(0.7) !important;
+                transform: scale(1) !important;
             }
         }
 
@@ -643,30 +650,26 @@
         .square {
             border: none;
         }
+        
+        /* Back button container */
+        .back-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 
 <body>
-    <!-- Navigation Bar -->
-    <nav class="navbar">
-        <div class="brand">
-            <div class="brand-logo">E</div>
-            <div>Escult</div>
-        </div>
-        <div class="nav-buttons">
-            <button class="nav-btn" onclick="window.location.href='index.html'">
-                <i class="fas fa-home"></i>
-                <span>Home</span>
-            </button>
-            <button class="nav-btn active">
-                <i class="fas fa-cube"></i>
-                <span>Designs</span>
-            </button>
-        </div>
-    </nav>
 
     <!-- Main Content -->
     <div class="main-container">
+        <div class="back-container">
+            <button class="backBtn" onclick="window.location.href='configurator.html'">
+                <i class="fas fa-arrow-left"></i> Back to Configurator
+            </button>
+        </div>
+        
         <h1>My Escult Designs</h1>
         <div class="design-grid" id="designGrid"></div>
         <button id="print-btn" class="printAll">Print / Download All Designs</button>
@@ -685,9 +688,6 @@
 
                 card.innerHTML = `
                     <div class="summary-container">
-                        <div class="watermark watermark-1">E</div>
-                        <div class="watermark watermark-2">E</div>
-                        <div class="watermark watermark-3">E</div>
 
                         <div class="summary-preview">
                             <h4>Final Preview</h4>
